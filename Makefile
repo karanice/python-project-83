@@ -16,3 +16,6 @@ render-start:
 
 lint:
 		uv run ruff check page_analyzer
+
+fix-lint:
+		uv run ruff check --fix page_analyzer  
