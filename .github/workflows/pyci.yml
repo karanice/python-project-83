@@ -1,5 +1,3 @@
-# СКОПИРОВАНО С ГЕНДИФФА, РАЗОБРАТЬСЯ И ПЕРЕДЕЛАТЬ ПОД СВОИ НУЖДЫ
-
 name: Python CI
 
 on:
@@ -14,7 +12,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-        # make depends on uv
       - name: Install dependencies
         run: |
           pip install uv
@@ -22,20 +19,14 @@ jobs:
       - name: Run linter and pytest
         run: |
           make check
-      - name: Analyze with SonarQube
-        uses: SonarSource/sonarqube-scan-action@7295e71c9583053f5bf40e9d4068a0c974603ec8
+  sonarqube:
+    name: SonarQube
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth:
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@v5
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        # SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-        # with:
-        #   args:
-        #     -Dsonar.projectKey=karanice_python-project-83
-        #     # Comma-separated paths to directories containing main source files.
-        #     #-Dsonar.sources= # optional, default is project base directory
-        #     # When you need the analysis to take place in a directory other than the one from which it was launched
-        #     #-Dsonar.projectBaseDir= # optional, default is .
-        #     # Comma-separated paths to directories containing test source files.
-        #     #-Dsonar.tests= # optional. For more info about Code Coverage, please refer to https://docs.sonarcloud.io/enriching/test-coverage/overview/
-        #     # Adds more detail to both client and server-side analysis logs, activating DEBUG mode for the scanner, and adding client-side environment variables and system properties to the server-side log of analysis report processing.
-        #     #-Dsonar.verbose= # optional, default is false
