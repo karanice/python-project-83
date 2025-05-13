@@ -31,7 +31,8 @@ class SiteRepository:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO urls (name, created_at) VALUES (%s, CURRENT_DATE)
+                    INSERT INTO urls (name, created_at) 
+                    VALUES (%s, CURRENT_DATE)
                     RETURNING id
                     """,
                     (url['url'],)

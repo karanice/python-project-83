@@ -12,15 +12,18 @@ class CheckRepository:
     def get_content_by_url_id(self, id):
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute("SELECT * FROM url_checks WHERE url_id = %s ORDER BY id DESC", (id,))
+                cur.execute("SELECT * FROM url_checks " 
+                "WHERE url_id = %s ORDER BY id DESC", (id,))
                 return cur.fetchall()
             
     def get_last_check_date_by_id(self, id):
         with self.get_connection() as conn:
             with conn.cursor(cursor_factory=RealDictCursor) as cur:
-                cur.execute("SELECT created_at FROM url_checks WHERE url_id = %s ORDER BY id DESC", (id,))
-                return cur.fetchone()["created_at"]
-
+                cur.execute("SELECT created_at FROM url_checks " 
+                "WHERE url_id = %s ORDER BY id DESC", (id,))
+                raw_row = cur.fetchone()
+                last_check = raw_row['created_at'] if raw_row else ''
+                return last_check
             
     def save(self, url_id):
         self._create(url_id)
@@ -30,12 +33,13 @@ class CheckRepository:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO url_checks (url_id, created_at) VALUES (%s, CURRENT_DATE)
+                    INSERT INTO url_checks (url_id, created_at) 
+                    VALUES (%s, CURRENT_DATE)
                     RETURNING id
                     """,
                     (url_id,)
                 )
-                id = cur.fetchone()[0]
+                # id = cur.fetchone()[0]
             conn.commit()
             
     

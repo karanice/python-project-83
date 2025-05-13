@@ -13,8 +13,8 @@ from flask import (
 )
 from validators import url as validate
 
-from .urls_repo import SiteRepository
 from .checks_repo import CheckRepository
+from .urls_repo import SiteRepository
 
 load_dotenv()
 app = Flask(__name__)
@@ -80,11 +80,12 @@ def urls_post():
 
 @app.route('/urls')
 def urls_get():
-    urls=url_repo.get_content()
+    urls = url_repo.get_content()
     urls_with_last_check = []
     for url in urls:
         url_with_last_check = url
-        url_with_last_check["last_check"] = check_repo.get_last_check_date_by_id(url["id"])
+        last_check = check_repo.get_last_check_date_by_id(url["id"])
+        url_with_last_check["last_check"] = last_check
         urls_with_last_check.append(url_with_last_check)
     return render_template(
         'urls.html',
@@ -101,8 +102,9 @@ def urls_show(id):
         'url.html',
         url=url,
         messages=messages,
-        checks = checks
+        checks=checks
     )
+
 
 @app.route('/urls/<id>/checks', methods=['POST'])
 def create_check(id):
