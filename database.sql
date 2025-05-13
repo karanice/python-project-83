@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS urls (
     id bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     name VARCHAR(255) UNIQUE NOT NULL,
-    created_at timestamp
+    created_at date
 );
 
 CREATE TABLE IF NOT EXISTS url_checks (
@@ -11,5 +11,5 @@ CREATE TABLE IF NOT EXISTS url_checks (
     h1 text, 
     title text, 
     description text,
-    created_at timestamp
+    created_at date
 );
