@@ -13,7 +13,7 @@ from flask import (
 )
 from validators import url as validate
 
-from .mock_repo import SiteRepository
+from .urls_repo import SiteRepository
 
 load_dotenv()
 app = Flask(__name__)
