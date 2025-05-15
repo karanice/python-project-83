@@ -21,6 +21,13 @@ class SiteRepository:
                 cur.execute("SELECT * FROM urls WHERE id = %s", (id,))
                 row = cur.fetchone()
                 return dict(row) if row else None
+
+    def find_by_name(self, name):
+        with self.get_connection() as conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("SELECT * FROM urls WHERE name = %s", (name,))
+                row = cur.fetchone()
+                return dict(row) if row else None
         
     def save(self, url):
         self._create(url)
