@@ -2,6 +2,7 @@ import os
 from urllib.parse import urlparse
 
 import requests
+from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -58,12 +59,6 @@ def urls_post():
             url=user_data['url'],
         )
     
-    user_data['url'] = normalize_root(user_data['url'])
-    if user_data['url'] in urls_names:
-        flash('Страница уже существует', 'alert-info')
-        id = url_repo.find_by_name(user_data['url'])['id']
-        return redirect(url_for('urls_show', id=id), code=302)
-    
     if len(user_data['url']) > 255:
         flash('URL превышает 255 символов', 'alert-danger')
         messages = get_flashed_messages(with_categories=True)
@@ -72,6 +67,12 @@ def urls_post():
             messages=messages,
             url=user_data['url'],
         )
+    
+    user_data['url'] = normalize_root(user_data['url'])
+    if user_data['url'] in urls_names:
+        flash('Страница уже существует', 'alert-info')
+        id = url_repo.find_by_name(user_data['url'])['id']
+        return redirect(url_for('urls_show', id=id), code=302)
     
     id = url_repo.save(user_data)
     flash('Страница успешно добавлена', 'alert-success')
@@ -124,6 +125,15 @@ def create_check(id):
         flash('Произошла ошибка при проверке', 'alert-danger')
         return redirect(url_for('urls_show', id=id))
     
-    check_repo.save(id, status_code)
+    soup = BeautifulSoup(r.text, 'html.parser') 
+
+    title = str(soup.title.string) if soup.title else ''
+
+    h1 = str(soup.h1.string) if soup.h1 else ''
+
+    meta_tag = soup.find('meta', attrs={'name': 'description'})
+    desc = str(meta_tag.get('content')) if meta_tag else ''
+
+    check_repo.save(id, status_code, h1, title, desc)
     flash('Страница успешно проверена', 'alert-success')
     return redirect(url_for('urls_show', id=id))

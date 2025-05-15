@@ -34,8 +34,8 @@ class CheckRepository:
                 last_status_code = raw_row['status_code'] if raw_row else ''
                 return last_status_code
             
-    def save(self, url_id, status=0, h1='', title='', desc=''):
-        self._create(url_id, status, h1, title, desc)
+    def save(self, url_id, status_code=0, h1='', title='', desc=''):
+        self._create(url_id, status_code, h1, title, desc)
 
     def _create(self, url_id, status_code, h1, title, desc):
         with self.get_connection() as conn:
