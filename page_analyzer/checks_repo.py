@@ -25,19 +25,29 @@ class CheckRepository:
                 last_check = raw_row['created_at'] if raw_row else ''
                 return last_check
             
-    def save(self, url_id):
-        self._create(url_id)
+    def get_last_status_code_by_id(self, id):
+        with self.get_connection() as conn:
+            with conn.cursor(cursor_factory=RealDictCursor) as cur:
+                cur.execute("SELECT status_code FROM url_checks " 
+                "WHERE url_id = %s ORDER BY id DESC", (id,))
+                raw_row = cur.fetchone()
+                last_status_code = raw_row['status_code'] if raw_row else ''
+                return last_status_code
+            
+    def save(self, url_id, status=0, h1='', title='', desc=''):
+        self._create(url_id, status, h1, title, desc)
 
-    def _create(self, url_id):
+    def _create(self, url_id, status_code, h1, title, desc):
         with self.get_connection() as conn:
             with conn.cursor() as cur:
                 cur.execute(
                     """
-                    INSERT INTO url_checks (url_id, created_at) 
-                    VALUES (%s, CURRENT_DATE)
+                    INSERT INTO url_checks (url_id, status_code, h1,
+                    title, description, created_at) 
+                    VALUES (%s, %s, %s, %s, %s, CURRENT_DATE)
                     RETURNING id
                     """,
-                    (url_id,)
+                    (url_id, status_code, h1, title, desc)
                 )
                 # id = cur.fetchone()[0]
             conn.commit()
