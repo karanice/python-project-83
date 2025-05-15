@@ -120,7 +120,7 @@ def create_check(id):
         return redirect(url_for('urls_show', id=id))
     
     status_code = r.status_code
-    if str(status_code)[0] in ('4','5'):
+    if str(status_code)[0] in ('4', '5'):
         flash('Произошла ошибка при проверке', 'alert-danger')
         return redirect(url_for('urls_show', id=id))
     
