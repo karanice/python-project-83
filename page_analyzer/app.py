@@ -57,7 +57,8 @@ def urls_post():
             'main.html',
             messages=messages,
             url=user_data['url'],
-        )
+            
+        ), 422
     
     if len(user_data['url']) > 255:
         flash('URL превышает 255 символов', 'alert-danger')
@@ -66,7 +67,7 @@ def urls_post():
             'main.html',
             messages=messages,
             url=user_data['url'],
-        )
+        ), 422
     
     user_data['url'] = normalize_root(user_data['url'])
     if user_data['url'] in urls_names:
