@@ -28,6 +28,14 @@ class SiteRepository:
                 cur.execute("SELECT * FROM urls WHERE name = %s", (name,))
                 row = cur.fetchone()
                 return dict(row) if row else None
+            
+    def clear(self):
+        with self.get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    'TRUNCATE TABLE urls RESTART IDENTITY CASCADE'
+                    )
+            conn.commit()
         
     def save(self, url):
         self._create(url)

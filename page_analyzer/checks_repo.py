@@ -33,7 +33,15 @@ class CheckRepository:
                 raw_row = cur.fetchone()
                 last_status_code = raw_row['status_code'] if raw_row else ''
                 return last_status_code
-            
+
+    def clear(self):
+        with self.get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute(
+                    'TRUNCATE TABLE url_checks RESTART IDENTITY'
+                    )
+            conn.commit()
+
     def save(self, url_id, status_code=0, h1='', title='', desc=''):
         self._create(url_id, status_code, h1, title, desc)
 
