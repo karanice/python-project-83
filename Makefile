@@ -21,7 +21,7 @@ fix-lint:
 		uv run ruff check --fix page_analyzer  
 
 test:
-		PYTHONPATH=$(PWD) uv run pytest -vv
+		uv run pytest -vv
 
 test-coverage:
 		uv run pytest --cov=gendiff --cov-report xml
