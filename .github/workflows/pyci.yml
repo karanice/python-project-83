@@ -18,7 +18,7 @@ jobs:
           make install
       - name: Run linter and pytest
         run: |
-          make lint
+          make check
   sonarqube:
     name: SonarQube
     runs-on: ubuntu-latest
