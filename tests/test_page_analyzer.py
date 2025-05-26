@@ -1,17 +1,13 @@
 import pytest
 import psycopg2
-import os
-from dotenv import load_dotenv
 from page_analyzer.app import app
 
 blobfish_url = 'https://ru.wikipedia.org/wiki/Psychrolutes_marcidus'
 invalid_url = 'kjdho72417ojef'
 
-load_dotenv()
-
 @pytest.fixture 
 def setup_db(): 
-    conn = psycopg2.connect(os.getenv('DATABASE_URL')) 
+    conn = psycopg2.connect(app.config['DATABASE_URL']) 
     with conn.cursor() as cur: 
         with open('database.sql', 'r') as f: 
             cur.execute(f.read())
