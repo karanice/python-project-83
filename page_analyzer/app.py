@@ -2,7 +2,6 @@ import os
 from urllib.parse import urlparse
 
 import requests
-from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from flask import (
     Flask,
@@ -15,6 +14,7 @@ from flask import (
 )
 from validators import url as validate
 
+from .ceo_analysis import get_ceo
 from .checks_repo import CheckRepository
 from .urls_repo import SiteRepository
 
@@ -125,15 +125,8 @@ def create_check(id):
     if str(status_code)[0] in ('4', '5'):
         flash('Произошла ошибка при проверке', 'alert-danger')
         return redirect(url_for('urls_show', id=id))
-    
-    soup = BeautifulSoup(r.text, 'html.parser') 
 
-    title = str(soup.title.string) if soup.title else ''
-
-    h1 = str(soup.h1.string) if soup.h1 else ''
-
-    meta_tag = soup.find('meta', attrs={'name': 'description'})
-    desc = str(meta_tag.get('content')) if meta_tag else ''
+    h1, title, desc = get_ceo(r.text)
 
     check_repo.save(id, status_code, h1, title, desc)
     flash('Страница успешно проверена', 'alert-success')
